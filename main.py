@@ -28,12 +28,19 @@ def flash_card():
 
 
 # ----------------------- Creating New Random Flash Card ----------------------- #
+# method - 1
 if os.path.exists(WORDS_TO_LEARN):
     # print("The file exists.")
     data = pandas.read_csv(WORDS_TO_LEARN)
 else:
     # print("The file does not exist.")
     data = pandas.read_csv("data/french_words.csv")
+
+# # method - 2
+# try:
+#     data = pandas.read_csv("data/french_words.csv")
+# except FileNotFoundError:
+#     data = pandas.read_csv(WORDS_TO_LEARN)
 
 dictionary = data.to_dict(orient="records")
 
