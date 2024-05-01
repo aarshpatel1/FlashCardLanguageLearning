@@ -6,16 +6,15 @@ import pandas
 BACKGROUND_COLOR = "#B1DDC6"
 
 # global variables
-flash_card_timer = None
+random_word_pair = {}
 
 
 # ----------------------- Card Flipping Mechanism ----------------------- #
-def flash_card(random_word_pair):
-    random_english_word = random_word_pair["English"]
+def flash_card():
+    # showing english translation of the French word previously displayed
     canvas.itemconfig(canvas_image, image=back_image)
     canvas.itemconfig(title, text="English", fill="white")
-    canvas.itemconfig(word, text=random_english_word, fill="white")
-    # window.after_cancel(flash_card_timer)
+    canvas.itemconfig(word, text=random_word_pair["English"], fill="white")
 
 
 # ----------------------- Creating New Random Flash Card ----------------------- #
@@ -24,14 +23,21 @@ dictionary = data.to_dict(orient="records")
 
 
 def random_card():
+    global random_word_pair, flash_card_timer
+
+    # cancels the current running loop
+    window.after_cancel(flash_card_timer)
+
+    # choosing randomly word pair from the dictionary created using pandas from french_words.csv
     random_word_pair = random.choice(dictionary)
-    random_french_word = random_word_pair["French"]
-    # random_english_word = random_word_pair["English"]
+
+    # changing canvas background color, text color and French word
     canvas.itemconfig(canvas_image, image=front_image)
     canvas.itemconfig(title, text="French", fill="black")
-    canvas.itemconfig(word, text=random_french_word, fill="black")
-    window.after(3000, flash_card, random_word_pair)
-    # flash_card_timer = window.after(3000, flash_card, random_word_pair)
+    canvas.itemconfig(word, text=random_word_pair["French"], fill="black")
+
+    # starts a new loop for 3 seconds
+    flash_card_timer = window.after(3000, flash_card)
 
 
 # ----------------------- UI setup ----------------------- #
@@ -39,6 +45,9 @@ def random_card():
 window = Tk()
 window.title("Flashy")
 window.config(padx=50, pady=60, bg=BACKGROUND_COLOR)
+
+# timer for the remembering the French word
+flash_card_timer = window.after(3000, flash_card)
 
 # created the canvas
 canvas = Canvas(height=526, width=800, bg=BACKGROUND_COLOR, highlightthickness=0)
