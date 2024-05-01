@@ -1,12 +1,22 @@
 from tkinter import *
 import random
 import pandas
+import os.path
 
 # constants
 BACKGROUND_COLOR = "#B1DDC6"
+WORDS_TO_LEARN = "data/words_to_learn.csv"
 
 # global variables
 random_word_pair = {}
+
+
+# ----------------------- Storing unknown words into new file and managing it ----------------------- #
+def known_word():
+    random_card()
+    dictionary.remove(random_word_pair)
+    left_words = pandas.DataFrame(dictionary)
+    left_words.to_csv(WORDS_TO_LEARN, index=False)
 
 
 # ----------------------- Card Flipping Mechanism ----------------------- #
@@ -18,7 +28,13 @@ def flash_card():
 
 
 # ----------------------- Creating New Random Flash Card ----------------------- #
-data = pandas.read_csv("data/french_words.csv")
+if os.path.exists(WORDS_TO_LEARN):
+    # print("The file exists.")
+    data = pandas.read_csv(WORDS_TO_LEARN)
+else:
+    # print("The file does not exist.")
+    data = pandas.read_csv("data/french_words.csv")
+
 dictionary = data.to_dict(orient="records")
 
 
@@ -71,7 +87,7 @@ wrong_button.grid(column=0, row=1)
 
 # right button
 right = PhotoImage(file="images/right.png")
-right_button = Button(image=right, highlightthickness=0, command=random_card)
+right_button = Button(image=right, highlightthickness=0, command=known_word)
 right_button.grid(column=1, row=1)
 
 random_card()
